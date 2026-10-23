@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>彼岸許願池</title>
+<style>
+:root{--r:#b00014;--b:#050003}
+*{box-sizing:border-box;margin:0}
+html,body{min-height:100%;background:var(--b);color:#d9c7c7;font-family:"PMingLiU","Noto Serif TC","Songti TC",serif;overflow-x:hidden;cursor:crosshair}
+#rain{position:fixed;inset:0;z-index:0}
+.noise{position:fixed;inset:-50%;z-index:4;pointer-events:none;opacity:.09;background:url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");animation:nz .5s steps(5) infinite}
+@keyframes nz{20%{transform:translate(-3%,2%)}40%{transform:translate(2%,-4%)}60%{transform:translate(-4%,-2%)}80%{transform:translate(3%,3%)}}
+.scan{position:fixed;inset:0;z-index:4;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.25) 0 1px,transparent 1px 3px)}
+.vig{position:fixed;inset:0;z-index:5;pointer-events:none;background:radial-gradient(ellipse at center,transparent 35%,rgba(0,0,0,.92) 100%);animation:br 5s infinite ease-in-out}
+@keyframes br{50%{opacity:.65}}
+.wrap{position:relative;z-index:3;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:26px 16px 70px;gap:14px;text-align:center;transition:transform .2s}
+#sigil{width:min(52vw,210px);filter:drop-shadow(0 0 14px #b00014);animation:spin 40s linear infinite}
+#sigil.hot{animation-duration:1.2s;filter:drop-shadow(0 0 34px #f00)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.glitch{position:relative;font-size:clamp(2rem,10vw,4rem);letter-spacing:.3em;font-weight:400;color:#eedada;text-shadow:0 0 14px var(--r);padding-left:.3em}
+.glitch::before,.glitch::after{content:attr(data-t);position:absolute;left:0;top:0;width:100%;padding-left:.3em}
+.glitch::before{color:#f00;animation:g1 2.4s infinite steps(1)}
+.glitch::after{color:#0ff;animation:g2 3.1s infinite steps(1)}
+@keyframes g1{0%,88%,100%{clip-path:inset(0 0 100% 0)}90%{clip-path:inset(15% 0 55% 0);transform:translate(-7px)}94%{clip-path:inset(62% 0 8% 0);transform:translate(6px)}}
+@keyframes g2{0%,80%,100%{clip-path:inset(0 0 100% 0)}83%{clip-path:inset(40% 0 30% 0);transform:translate(7px)}91%{clip-path:inset(5% 0 80% 0);transform:translate(-5px)}}
+.sub{opacity:.6;letter-spacing:.4em;font-size:.9rem;min-height:1.4em}
+.box{display:flex;gap:8px;width:min(92vw,520px)}
+input{flex:1;min-width:0;background:rgba(0,0,0,.65);border:1px solid #5a0010;border-bottom:2px solid var(--r);color:#f4e2e2;padding:12px;font:inherit;font-size:1.05rem;outline:none;box-shadow:inset 0 0 18px rgba(176,0,20,.3)}
+input:focus{box-shadow:0 0 26px rgba(255,0,40,.5),inset 0 0 18px rgba(176,0,20,.3)}
+button{background:#3a0008;color:#ffd0d0;border:1px solid var(--r);padding:0 18px;font:inherit;letter-spacing:.3em;cursor:pointer;transition:.2s}
+button:hover{background:var(--r);box-shadow:0 0 26px #f00;animation:shk .1s infinite}
+button:disabled{opacity:.4;animation:none}
+#out{min-height:6em;width:min(92vw,560px);font-size:1.15rem;line-height:1.8;color:#ff8c98;text-shadow:0 0 8px #b00014;white-space:pre-wrap;word-break:break-word}
+.cnt{font-size:.8rem;opacity:.5;letter-spacing:.2em}
+.altar{width:min(92vw,520px);text-align:left;border-top:1px solid #3a0008;padding-top:10px;font-size:.9rem;opacity:.85}
+.altar h3{letter-spacing:.5em;color:#8a0014;font-weight:400;margin-bottom:6px}
+.altar li{list-style:none;padding:4px 0;border-bottom:1px dashed #2a0006}
+.altar small{float:right;opacity:.45}
+#snd{position:fixed;right:10px;bottom:10px;z-index:70;padding:6px 10px;font-size:.75rem;letter-spacing:0;height:auto}
+@keyframes shk{0%{transform:translate(0)}20%{transform:translate(-9px,6px)}40%{transform:translate(8px,-7px)}60%{transform:translate(-6px,-5px)}80%{transform:translate(7px,8px)}100%{transform:translate(0)}}
+.shake{animation:shk .08s 9}
+.rgb{animation:rgb .15s steps(2) infinite}
+@keyframes rgb{0%{filter:drop-shadow(6px 0 #f00) drop-shadow(-6px 0 #0ff)}100%{filter:drop-shadow(-9px 2px #f00) drop-shadow(9px -2px #0ff) hue-rotate(40deg)}}
+@keyframes fall{from{transform:translateY(-10vh)}to{transform:translateY(112vh)}}
+@keyframes fade{0%{opacity:0}15%{opacity:.9}100%{opacity:0;filter:blur(6px)}}
+.fl{position:fixed;top:0;z-index:4;color:#c00018;pointer-events:none;animation:fall linear forwards;text-shadow:0 0 8px #f00}
+.wh{position:fixed;z-index:4;pointer-events:none;animation:fade 4.5s forwards;color:#cbaaaa;text-shadow:0 0 10px #b00014;white-space:nowrap}
+.cd{position:fixed;z-index:4;pointer-events:none;animation:fade 3.2s forwards;color:#d0001c;font:12px monospace;white-space:nowrap}
+.tr{position:fixed;z-index:4;pointer-events:none;color:#f02040;font-size:14px;animation:fade 1.2s forwards}
+.dr{position:fixed;top:0;z-index:7;height:0;pointer-events:none;background:linear-gradient(#6a0009,#c00018);border-radius:0 0 50% 50%;transition:height 2.2s cubic-bezier(.3,.1,.5,1),opacity 1s}
+.crash{position:fixed;z-index:90;left:50%;top:50%;transform:translate(-50%,-50%);background:#000;border:2px solid #f00;color:#f33;font:12px/1.5 monospace;padding:16px;width:min(86vw,430px);box-shadow:0 0 0 100vmax rgba(0,0,0,.75);text-align:left}
+.black{position:fixed;inset:0;background:#000;z-index:50;opacity:0;pointer-events:none;transition:opacity .15s}
+.black.on{opacity:1}
+.eye{position:fixed;z-index:60;border-radius:50%;pointer-events:none;overflow:hidden;background:radial-gradient(#fff,#d9aaaa);transform:translate(-50%,-50%) scaleY(0);transition:transform .45s;box-shadow:0 0 22px var(--r),inset 0 0 12px #600}
+.eye.open{transform:translate(-50%,-50%) scaleY(1)}
+.eye i{position:absolute;left:30%;top:0;width:40%;height:100%;background:#000;border-radius:50%;box-shadow:inset 0 0 0 4px #b00014;transition:transform .1s}
+#cat{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;background:#000;overflow:hidden}
+#cat.on{display:flex;animation:fb .07s steps(2) 18,shk .04s infinite}
+@keyframes fb{0%{background:#000}100%{background:#7a0000}}
+#cat>*{width:min(110vw,110vh);max-height:112vh;object-fit:contain;animation:zm .25s cubic-bezier(.1,.9,.2,1) forwards}
+@keyframes zm{from{transform:scale(.2)}to{transform:scale(1.15)}}
+#cute{position:fixed;inset:0;z-index:99;display:none;align-items:center;justify-content:center;background:#fff8ee}
+#cute.on{display:flex}
+#cute img{width:min(70vw,360px);animation:cin 1.2s ease-out forwards}
+@keyframes cin{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+</style>
+</head>
+<body>
+<canvas id="rain"></canvas>
+<div class="noise"></div><div class="scan"></div><div class="vig"></div><div class="black"></div>
+<div class="wrap">
+  <div id="sigil"></div>
+  <h1 class="glitch" data-t="彼岸許願池">彼岸許願池</h1>
+  <p class="sub" id="sub">凡有所求，必有所償</p>
+  <div class="box"><input id="wish" maxlength="60" autocomplete="off" placeholder="寫下你的願望…"><button id="btn">獻 祭</button></div>
+  <div id="out"></div>
+  <div class="cnt" id="cnt"></div>
+  <div class="altar"><h3>祭　壇</h3><ul id="altar"></ul></div>
+</div>
+<button id="snd">聲音：開</button>
+<div id="cat"></div>
+<div id="cute"></div>
+
+<script>
+const CAT_IMG=""; // ← 想用自己的圖：填圖片網址或 base64
+const $=s=>document.querySelector(s),R=a=>a[Math.random()*a.length|0],rnd=(a,b)=>a+Math.random()*(b-a),sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const G="願死哭眼血夢影骨灰霧∅█▓▒░ᛉᛟᚦ§¶Ω∆ʘ҉01#$%&@",GA=[...G];
+let pool=GA,busy=false,n=0,on=true,mx=0,my=0,lt=0;
+const zalgo=(s,k=4)=>[...s].map(c=>c+Array.from({length:k},()=>String.fromCharCode(0x300+Math.random()*112|0)).join("")).join("");
+const corrupt=(s,p)=>[...s].map(c=>Math.random()<p?R(GA):c).join("");
+const hex=()=>"0x"+(Math.random()*0xffffff|0).toString(16).toUpperCase().padStart(6,"0");
+
+/* 法陣 */
+(function(){let p="";for(let i=0;i<5;i++){const a=Math.PI/2+i*4*Math.PI/5;p+=(i?"L":"M")+(100+78*Math.cos(a)).toFixed(1)+" "+(100+78*Math.sin(a)).toFixed(1)}
+let t="";for(let i=0;i<48;i++){const a=i*Math.PI/24;t+=`<line x1="${100+92*Math.cos(a)}" y1="${100+92*Math.sin(a)}" x2="${100+(i%4?96:99)*Math.cos(a)}" y2="${100+(i%4?96:99)*Math.sin(a)}"/>`}
+$("#sigil").innerHTML=`<svg viewBox="0 0 200 200" fill="none" stroke="#b00014" stroke-width="1.2"><circle cx="100" cy="100" r="98"/><circle cx="100" cy="100" r="88" stroke-dasharray="3 5"/><path d="${p}Z"/><circle cx="100" cy="100" r="30" stroke="#ff2a40"/>${t}<path d="M62 100Q100 68 138 100Q100 132 62 100Z" fill="#200005" stroke="#ff2a40"/><circle cx="100" cy="100" r="11" fill="#b00014" stroke="none"/><ellipse cx="100" cy="100" rx="3" ry="10" fill="#000" stroke="none"/></svg>`})();
+
+/* 背景字雨 */
+const cv=$("#rain"),cx=cv.getContext("2d");let W,H,drops;
+function rs(){W=cv.width=innerWidth;H=cv.height=innerHeight;drops=Array.from({length:Math.ceil(W/22)},()=>rnd(-50,0))}
+addEventListener("resize",rs);rs();
+setInterval(()=>{cx.fillStyle="rgba(5,0,3,.12)";cx.fillRect(0,0,W,H);cx.font="18px serif";
+drops.forEach((y,i)=>{cx.fillStyle=Math.random()<.02?"#ff2a40":"rgba(140,0,20,.55)";cx.fillText(R(pool),i*22,y*22);drops[i]=y*22>H&&Math.random()>.975?0:y+1})},60);
+
+/* 音效 */
+let AC;
+function au(){if(!AC){try{AC=new(window.AudioContext||webkitAudioContext)()}catch(e){}}if(AC&&AC.state=="suspended")AC.resume();return AC}
+function drone(){const a=au();if(!a||drone.s)return;drone.s=1;const o=a.createOscillator(),o2=a.createOscillator(),g=a.createGain(),l=a.createOscillator(),lg=a.createGain();
+o.type="sawtooth";o.frequency.value=48;o2.frequency.value=51;g.gain.value=.025;l.frequency.value=.15;lg.gain.value=.02;
+l.connect(lg);lg.connect(g.gain);o.connect(g);o2.connect(g);g.connect(a.destination);o.start();o2.start();l.start();drone.g=g}
+function sfx(f1,f2,d,type="sine",v=.2){if(!on)return;const a=au();if(!a)return;const o=a.createOscillator(),g=a.createGain(),t=a.currentTime;
+o.type=type;o.frequency.setValueAtTime(f1,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(a.destination);o.start();o.stop(t+d)}
+function noise(d,v=.3){if(!on)return;const a=au();if(!a)return;const b=a.createBuffer(1,a.sampleRate*d,a.sampleRate),c=b.getChannelData(0);
+for(let i=0;i<c.length;i++)c[i]=(Math.random()*2-1)*(1-i/c.length);const s=a.createBufferSource(),g=a.createGain();g.gain.value=v;s.buffer=b;s.connect(g);g.connect(a.destination);s.start()}
+function speak(t){try{if(!on||!window.speechSynthesis)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t.replace(/\n/g,"。"));u.lang="zh-TW";u.pitch=0;u.rate=.55;u.volume=.8;speechSynthesis.speak(u)}catch(e){}}
+$("#snd").onclick=()=>{on=!on;$("#snd").textContent="聲音："+(on?"開":"關");if(drone.g)drone.g.gain.value=on?.025:0;if(!on)try{speechSynthesis.cancel()}catch(e){}};
+
+/* 眼睛 */
+function eye(x,y,s=40,life=5000){const e=document.createElement("div");e.className="eye";e.style.cssText=`left:${x}px;top:${y}px;width:${s}px;height:${s*.55}px`;e.innerHTML="<i></i>";document.body.appendChild(e);
+setTimeout(()=>e.classList.add("open"),30);setTimeout(()=>{e.classList.remove("open");setTimeout(()=>e.remove(),600)},life);track()}
+function track(){document.querySelectorAll(".eye").forEach(e=>{const r=e.getBoundingClientRect(),a=Math.atan2(my-(r.top+r.height/2),mx-(r.left+r.width/2));e.firstChild.style.transform=`translate(${Math.cos(a)*r.width*.25}px,${Math.sin(a)*r.height*.18}px)`})}
+addEventListener("pointermove",e=>{mx=e.clientX;my=e.clientY;track();const t=Date.now();if(t-lt>70&&Math.random()<.5){lt=t;const s=document.createElement("span");s.className="tr";s.textContent=R(GA);s.style.cssText=`left:${mx}px;top:${my}px`;document.body.appendChild(s);setTimeout(()=>s.remove(),1200)}});
+addEventListener("pointerdown",e=>{mx=e.clientX;my=e.clientY;if(!/INPUT|BUTTON/.test(e.target.tagName)&&Math.random()<.55)eye(e.clientX,e.clientY,rnd(30,70),rnd(2500,5000))});
+
+/* 低語與亂碼 */
+const WS=["你聽見了嗎","它在牆裡","別回頭","不要看右邊","還醒著嗎","有人在你背後呼吸","我們記得你","你已經許過了","快逃","不是風","你以為你是自願的","它在數你的心跳","門沒有關","為什麼你還在這裡","往下看","ＨＥＬＰ"];
+const CD=["if(you.asleep){door.open("+hex()+")}","SOUL_BUFFER_OVERFLOW @"+hex(),"sudo rm -rf /你的名字","while(true){watch(你)}","null.願望 = undefined; // 已收下","throw new Error('它醒了')","ptr->眼睛 = malloc(∞)","你.影子.detach()","kernel panic: 他不在這裡","SELECT 靈魂 FROM 你 WHERE 自由=0;","0x666 → 0xDEAD → 0x你","segfault: 記憶 #"+hex()];
+function whisper(){const s=document.createElement("span");s.className="wh";let t=R(WS),r=Math.random();t=r<.25?zalgo(t,3):r<.45?corrupt(t,.4):t;
+s.textContent=t;s.style.cssText=`left:${rnd(2,80)}%;top:${rnd(3,92)}%;font-size:${rnd(12,30)}px;transform:rotate(${rnd(-12,12)}deg)${Math.random()<.2?" scaleX(-1)":""}`;document.body.appendChild(s);setTimeout(()=>s.remove(),4600)}
+function code(){const s=document.createElement("span");s.className="cd";s.textContent=R(CD);s.style.cssText=`left:${rnd(0,85)}%;top:${rnd(0,96)}%`;document.body.appendChild(s);setTimeout(()=>s.remove(),3300)}
+setInterval(whisper,2300);setInterval(code,1500);
+setInterval(()=>{if(Math.random()<.35)eye(rnd(20,innerWidth-20),rnd(20,innerHeight-20),rnd(26,70),rnd(3000,7000))},3500);
+setInterval(()=>{if(Math.random()<.4){document.body.style.opacity=.25;setTimeout(()=>document.body.style.opacity=1,70);setTimeout(()=>document.body.style.opacity=.5,140);setTimeout(()=>document.body.style.opacity=1,200)}},5000);
+const h=$("h1");setInterval(()=>{if(Math.random()<.35){const o="彼岸許願池",t=Math.random()<.5?zalgo(o,3):corrupt(o,.5);h.textContent=t;h.dataset.t=t;setTimeout(()=>{h.textContent=o;h.dataset.t=o},rnd(120,400))}},2200);
+const SB=["凡有所求，必有所償","你已經在名單上了","不要相信鏡子裡的那位","我們一直都在這裡","請勿告訴任何人你來過"],PH=["寫下你的願望…","寫下你不敢說出口的…","我們在聽","它已經知道了","寫吧。反正刪不掉。"];
+setInterval(()=>{if(Math.random()<.4){$("#sub").textContent=Math.random()<.3?zalgo(R(SB),2):R(SB)}if(Math.random()<.3)$("#wish").placeholder=R(PH)},3000);
+let cnt=6666;setInterval(()=>{cnt+=R([-1,1,1,2,3]);$("#cnt").textContent=Math.random()<.08?"此刻有 1 雙眼睛在注視你。就在你身後。":`此刻有 ${cnt.toLocaleString()} 雙眼睛在注視你`},1400);
+const T0=document.title;document.addEventListener("visibilitychange",()=>{document.title=document.hidden?"別走……":"歡迎回來。我們等你很久了。";if(!document.hidden)setTimeout(()=>document.title=T0,4000)});
+
+/* 祭壇 */
+const TM=["昨夜","三天前","尚未發生","一百年前","此刻","明天"],al=$("#altar");
+function addAltar(t){const li=document.createElement("li"),sp=document.createElement("span"),sm=document.createElement("small");sp.className="t";sp.textContent=t;sm.textContent=R(TM);li.append(sp,sm);al.prepend(li);while(al.children.length>8)al.lastChild.remove()}
+["請讓這間房子安靜下來","讓那個人從此沒有影子","我想再見她一面"].forEach(addAltar);
+setInterval(()=>{const li=R([...al.children]);if(!li)return;const s=li.querySelector(".t"),o=s.textContent;
+if(Math.random()<.15){s.textContent="這不是我寫的";setTimeout(()=>s.textContent=o,900)}else{s.textContent=corrupt(o,.35);setTimeout(()=>s.textContent=o,500)}},2600);
+
+/* 特效 */
+function crash(){const d=document.createElement("div");d.className="crash";let l="";for(let i=0;i<9;i++)l+=R(CD)+"\n";
+d.innerHTML=`<b>願望.exe 發生嚴重錯誤</b><pre style="white-space:pre-wrap;margin-top:8px">${hex()} ${hex()}\n${l.replace(/</g,"&lt;")}</pre>`;document.body.appendChild(d);sfx(300,60,.4,"square",.2);setTimeout(()=>d.remove(),2400)}
+const FX=[
+w=>{const e=$(".wrap");e.classList.add("shake");sfx(60,30,.6,"square",.25);setTimeout(()=>e.classList.remove("shake"),800)},
+w=>{let i=0;const t=setInterval(()=>{document.documentElement.style.filter=i%2?"":"invert(1) hue-rotate(180deg)";if(++i>6){clearInterval(t);document.documentElement.style.filter=""}},90)},
+w=>{const e=$(".wrap");e.classList.add("rgb");setTimeout(()=>e.classList.remove("rgb"),1400)},
+w=>{for(let i=0;i<26;i++){const d=document.createElement("div");d.className="dr";d.style.cssText=`left:${rnd(0,100)}%;width:${rnd(6,22)}px`;document.body.appendChild(d);setTimeout(()=>d.style.height=rnd(15,90)+"vh",30+i*40);setTimeout(()=>d.style.opacity=0,3400);setTimeout(()=>d.remove(),4600)}},
+w=>{const a=[...w];for(let i=0;i<45;i++){const s=document.createElement("span");s.className="fl";s.textContent=R(a);s.style.cssText=`left:${rnd(0,98)}%;font-size:${rnd(16,46)}px;animation-duration:${rnd(2,5)}s;animation-delay:${rnd(0,1.5)}s`;document.body.appendChild(s);setTimeout(()=>s.remove(),7000)}pool=a;setTimeout(()=>pool=GA,6000)},
+w=>{const b=$(".black");b.classList.add("on");sfx(40,20,1.2,"sawtooth",.3);eye(innerWidth/2,innerHeight/2,Math.min(innerWidth,380),1400);setTimeout(()=>b.classList.remove("on"),1500)},
+w=>crash(),
+w=>{for(let i=0;i<7;i++)setTimeout(()=>eye(rnd(30,innerWidth-30),rnd(30,innerHeight-30),rnd(30,90),rnd(3000,6000)),i*160)},
+w=>{const e=$(".wrap");e.style.transform="scaleY(-1)";setTimeout(()=>e.style.transform="",900)}
+];
+
+/* 回應 */
+const RP=[
+w=>`「${w}」……\n我們聽見了。`,
+(w,n)=>`你是第 ${n+6665} 位許願的人。\n前面的人，都沒有回來。`,
+()=>`願望已被收下。\n代價，會在你最想不到的時候收取。`,
+w=>`「${w}」\n${zalgo("它很喜歡這個願望",2)}\n它說：還不夠。`,
+w=>`我們已經在你的名字旁邊\n寫下了「${w.slice(0,6)}」。\n擦不掉的。`,
+()=>`你不是第一次來這裡。\n你只是忘了。`,
+w=>`${corrupt("願望已成真",.3)}\n但「${w}」的人\n已經不是你了。`,
+()=>`有東西從你的願望裡醒來了。\n不要回頭。`,
+w=>`${hex()}\n${w}\n${hex()}\n——收件人：你的影子`,
+()=>`請在今晚子時，\n對著鏡子，把願望再念三遍。\n不要眨眼。`,
+()=>`你的位置已記錄。\n我們會親自去實現。`
+];
+
+/* 彩蛋：肥貓 */
+const CAT_SVG=`<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+<path d="M330 300 Q400 280 385 200 Q380 170 360 190" fill="none" stroke="#e8923a" stroke-width="28" stroke-linecap="round"/>
+<ellipse cx="200" cy="275" rx="175" ry="118" fill="#e8923a"/>
+<ellipse cx="200" cy="310" rx="110" ry="70" fill="#f6c78c"/>
+<path d="M60 240 Q90 250 100 280 M70 290 Q100 290 110 315 M340 240 Q310 250 300 280 M330 290 Q300 290 290 315" stroke="#a55a14" stroke-width="10" fill="none" stroke-linecap="round"/>
+<ellipse cx="110" cy="385" rx="55" ry="26" fill="#f6c78c"/><ellipse cx="290" cy="385" rx="55" ry="26" fill="#f6c78c"/>
+<polygon points="95,95 115,10 175,75" fill="#e8923a"/><polygon points="305,95 285,10 225,75" fill="#e8923a"/>
+<polygon points="112,80 120,38 150,72" fill="#e88a9a"/><polygon points="288,80 280,38 250,72" fill="#e88a9a"/>
+<ellipse cx="200" cy="150" rx="128" ry="100" fill="#e8923a"/>
+<path d="M200 55 L200 90 M170 60 L176 92 M230 60 L224 92" stroke="#a55a14" stroke-width="9" stroke-linecap="round"/>
+<ellipse cx="155" cy="135" rx="30" ry="34" fill="#ffee55"/><ellipse cx="245" cy="135" rx="30" ry="34" fill="#ffee55"/>
+<ellipse cx="155" cy="135" rx="5" ry="30" fill="#000"/><ellipse cx="245" cy="135" rx="5" ry="30" fill="#000"/>
+<polygon points="188,168 212,168 200,182" fill="#e88a9a"/>
+<path d="M200 182 Q180 200 160 188 M200 182 Q220 200 240 188" fill="none" stroke="#3a1a05" stroke-width="4"/>
+<ellipse cx="200" cy="205" rx="26" ry="16" fill="#3a0008"/>
+<polygon points="180,196 188,196 184,210" fill="#fff"/><polygon points="212,196 220,196 216,210" fill="#fff"/>
+<g stroke="#fff" stroke-width="2.5"><path d="M110 175 L40 160 M110 185 L35 190 M110 195 L45 218 M290 175 L360 160 M290 185 L365 190 M290 195 L355 218"/></g>
+</svg>`;
+let catT;
+const CUTE_IMG="cat.gif"; // ← 圖片路徑或網址
+function catScare(){
+  const q=$("#cute");
+  q.innerHTML=`<img src="${CUTE_IMG}" alt="">`;
+  q.classList.add("on");
+  sfx(880,1320,.25,"sine",.1);
+  clearTimeout(catT);
+  catT=setTimeout(()=>{q.classList.remove("on");q.innerHTML="";catJump()},2000);
+}
+function catJump(){
+  const c=$("#cat");
+  c.innerHTML=CAT_IMG?`<img src="${CAT_IMG}" alt="">`:CAT_SVG;
+  c.classList.add("on");
+  sfx(900,2400,.5,"sawtooth",.5);sfx(80,30,.9,"square",.5);noise(.7,.6);
+  setTimeout(()=>sfx(1200,300,.4,"sawtooth",.4),150);
+  clearTimeout(catT);
+  catT=setTimeout(()=>{
+    c.classList.remove("on");c.innerHTML="";
+    $("#out").textContent="……剛才，是什麼？";
+    setTimeout(()=>$("#out").textContent="你什麼都沒看見。",2200);
+  },1300);
+}
+
+/* 打字機 */
+async function type(t){
+  const o=$("#out");o.textContent="";
+  for(let i=0;i<t.length;i++){
+    o.textContent=t.slice(0,i)+(Math.random()<.3?R(GA):"");
+    await sleep(rnd(35,95));
+    o.textContent=t.slice(0,i+1);
+  }
+  if(Math.random()<.5){
+    await sleep(700);o.textContent=zalgo(t,2);
+    await sleep(160);o.textContent=t;
+  }
+}
+
+/* 提交願望 */
+const sb=$("#btn");
+async function submit(){
+  if(busy)return;
+  const inp=$("#wish"),w=inp.value.trim();
+  drone();
+  if(!w){await type("……什麼都不想要嗎？\n那我們替你選。");return}
+  busy=true;sb.disabled=true;inp.value="";
+  if(/貓|猫|cat|🐱|🐈|喵|neko/i.test(w)){
+    catScare();await sleep(4800);
+    busy=false;sb.disabled=false;return;
+  }
+  n++;addAltar(w);
+  $("#sigil").classList.add("hot");
+  sfx(110,40,.8,"sawtooth",.3);noise(.4,.2);
+  const fxs=[...FX].sort(()=>Math.random()-.5).slice(0,2+(Math.random()<.5?1:0));
+  fxs.forEach((f,i)=>setTimeout(()=>f(w),i*500));
+  let r=R(RP)(w,n);
+  if(/死|殺|恨|消失/.test(w))r="這個願望，我們最喜歡。\n它已經開始了。";
+  if(/救命|help|救我/i.test(w))r="沒有人會來。\n這裡只有我們。";
+  if(/666|魔|鬼/.test(w))r="你不必叫他的名字。\n他一直在看你。";
+  speak(r);
+  await type(r);
+  if(Math.random()<.35)setTimeout(crash,800);
+  setTimeout(()=>$("#sigil").classList.remove("hot"),1800);
+  busy=false;sb.disabled=false;
+}
+sb.onclick=submit;
+$("#wish").addEventListener("keydown",e=>{if(e.key==="Enter")submit()});
+$("#wish").addEventListener("input",()=>{sfx(rnd(120,260),60,.06,"square",.05);if(Math.random()<.04)eye(rnd(30,innerWidth-30),rnd(30,innerHeight-30),rnd(30,60),2500)});
+["pointerdown","keydown"].forEach(ev=>addEventListener(ev,()=>drone(),{once:true}));
+
+/* 閒置低語 */
+let idle=0;
+["pointermove","keydown"].forEach(ev=>addEventListener(ev,()=>idle=0));
+setInterval(()=>{
+  idle++;
+  if(idle===20&&!busy)type("你在猶豫什麼？\n它等不了太久。");
+  if(idle===45&&!busy){type("你還在嗎？\n我們看得見你。");eye(innerWidth/2,innerHeight/2,120,4000)}
+  if(idle>70){idle=0;crash()}
+},1000);
+</script>
+</body>
+</html>
