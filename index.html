@@ -64,6 +64,15 @@ button:disabled{opacity:.4;animation:none}
 #cute.on{display:flex}
 #cute img{width:min(70vw,360px);animation:cin 1.2s ease-out forwards}
 @keyframes cin{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+#cute.boom{animation:fb .07s steps(2) infinite}
+#cute.boom img{animation:big .3s cubic-bezier(.1,.9,.2,1) forwards,trem .05s linear .3s infinite}
+@keyframes big{from{transform:scale(1)}to{transform:scale(2.2)}}
+@keyframes trem{
+0%{transform:scale(2.2) translate(0,0) rotate(0)}
+25%{transform:scale(2.2) translate(-14px,10px) rotate(-2deg)}
+50%{transform:scale(2.2) translate(12px,-12px) rotate(2deg)}
+75%{transform:scale(2.2) translate(-10px,-8px) rotate(-1deg)}
+100%{transform:scale(2.2) translate(0,0) rotate(0)}}
 </style>
 </head>
 <body>
@@ -76,14 +85,13 @@ button:disabled{opacity:.4;animation:none}
   <div class="box"><input id="wish" maxlength="60" autocomplete="off" placeholder="寫下你的願望…"><button id="btn">獻 祭</button></div>
   <div id="out"></div>
   <div class="cnt" id="cnt"></div>
-  <div class="altar"><h3>祭　壇</h3><ul id="altar"></ul></div>
+  <div class="altar"><h3>獻祭器官</h3><ul id="altar"></ul></div>
 </div>
 <button id="snd">聲音：開</button>
-<div id="cat"></div>
 <div id="cute"></div>
 
 <script>
-const CAT_IMG=""; // ← 想用自己的圖：填圖片網址或 base64
+
 const $=s=>document.querySelector(s),R=a=>a[Math.random()*a.length|0],rnd=(a,b)=>a+Math.random()*(b-a),sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const G="願死哭眼血夢影骨灰霧∅█▓▒░ᛉᛟᚦ§¶Ω∆ʘ҉01#$%&@",GA=[...G];
 let pool=GA,busy=false,n=0,on=true,mx=0,my=0,lt=0;
@@ -139,9 +147,10 @@ let cnt=6666;setInterval(()=>{cnt+=R([-1,1,1,2,3]);$("#cnt").textContent=Math.ra
 const T0=document.title;document.addEventListener("visibilitychange",()=>{document.title=document.hidden?"別走……":"歡迎回來。我們等你很久了。";if(!document.hidden)setTimeout(()=>document.title=T0,4000)});
 
 /* 祭壇 */
-const TM=["昨夜","三天前","尚未發生","一百年前","此刻","明天"],al=$("#altar");
+const OR=["左眼","右眼","心臟","肝臟","左腎","右腎","舌頭","聲帶","十根手指","脊椎","肺","脾臟","耳朵","皮膚","一段記憶","牙齒","胰臟","膽囊","大腦皮質","影子"];
+const TM=["已收取","三天後收取","尚未收取","正在摘除","已被預訂"],al=$("#altar");
 function addAltar(t){const li=document.createElement("li"),sp=document.createElement("span"),sm=document.createElement("small");sp.className="t";sp.textContent=t;sm.textContent=R(TM);li.append(sp,sm);al.prepend(li);while(al.children.length>8)al.lastChild.remove()}
-["請讓這間房子安靜下來","讓那個人從此沒有影子","我想再見她一面"].forEach(addAltar);
+["左眼","心臟","舌頭"].forEach(addAltar);
 setInterval(()=>{const li=R([...al.children]);if(!li)return;const s=li.querySelector(".t"),o=s.textContent;
 if(Math.random()<.15){s.textContent="這不是我寫的";setTimeout(()=>s.textContent=o,900)}else{s.textContent=corrupt(o,.35);setTimeout(()=>s.textContent=o,500)}},2600);
 
@@ -162,62 +171,38 @@ w=>{const e=$(".wrap");e.style.transform="scaleY(-1)";setTimeout(()=>e.style.tra
 
 /* 回應 */
 const RP=[
-w=>`「${w}」……\n我們聽見了。`,
-(w,n)=>`你是第 ${n+6665} 位許願的人。\n前面的人，都沒有回來。`,
-()=>`願望已被收下。\n代價，會在你最想不到的時候收取。`,
-w=>`「${w}」\n${zalgo("它很喜歡這個願望",2)}\n它說：還不夠。`,
-w=>`我們已經在你的名字旁邊\n寫下了「${w.slice(0,6)}」。\n擦不掉的。`,
-()=>`你不是第一次來這裡。\n你只是忘了。`,
-w=>`${corrupt("願望已成真",.3)}\n但「${w}」的人\n已經不是你了。`,
-()=>`有東西從你的願望裡醒來了。\n不要回頭。`,
-w=>`${hex()}\n${w}\n${hex()}\n——收件人：你的影子`,
-()=>`請在今晚子時，\n對著鏡子，把願望再念三遍。\n不要眨眼。`,
-()=>`你的位置已記錄。\n我們會親自去實現。`
+(w,n,o)=>`願望「${w}」已實現。\n三天後，我們會來取走你的${o}。`,
+(w,n,o)=>`交易成立。\n代價：${o}。\n第三天夜裡，請保持安靜。`,
+(w,n,o)=>`已實現。不必道謝。\n三天後，你的${o}\n將不再屬於你。`,
+(w,n,o)=>`「${w.slice(0,8)}」——\n我們已經為你完成了。\n現在，輪到你的${o}。`,
+(w,n,o)=>`你的${o}已被標記。\n你還有三天，\n可以好好看著它。`,
+(w,n,o)=>`${zalgo("願望已成真",2)}\n倒數：72:00:00\n收取項目：${o}`,
+(w,n,o)=>`${hex()}\n${w}\n→ 已兌現\n→ 待收：${o}\n→ 期限：三天`,
+(w,n,o)=>`它很滿意這個願望，\n所以只取你的${o}就好。\n三天後，不要鎖門。`,
+(w,n,o)=>`你許了願，我們做了事。\n三天後，會輕輕地取走你的${o}。\n不會痛。大概。`
 ];
 
-/* 彩蛋：肥貓 */
-const CAT_SVG=`<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
-<path d="M330 300 Q400 280 385 200 Q380 170 360 190" fill="none" stroke="#e8923a" stroke-width="28" stroke-linecap="round"/>
-<ellipse cx="200" cy="275" rx="175" ry="118" fill="#e8923a"/>
-<ellipse cx="200" cy="310" rx="110" ry="70" fill="#f6c78c"/>
-<path d="M60 240 Q90 250 100 280 M70 290 Q100 290 110 315 M340 240 Q310 250 300 280 M330 290 Q300 290 290 315" stroke="#a55a14" stroke-width="10" fill="none" stroke-linecap="round"/>
-<ellipse cx="110" cy="385" rx="55" ry="26" fill="#f6c78c"/><ellipse cx="290" cy="385" rx="55" ry="26" fill="#f6c78c"/>
-<polygon points="95,95 115,10 175,75" fill="#e8923a"/><polygon points="305,95 285,10 225,75" fill="#e8923a"/>
-<polygon points="112,80 120,38 150,72" fill="#e88a9a"/><polygon points="288,80 280,38 250,72" fill="#e88a9a"/>
-<ellipse cx="200" cy="150" rx="128" ry="100" fill="#e8923a"/>
-<path d="M200 55 L200 90 M170 60 L176 92 M230 60 L224 92" stroke="#a55a14" stroke-width="9" stroke-linecap="round"/>
-<ellipse cx="155" cy="135" rx="30" ry="34" fill="#ffee55"/><ellipse cx="245" cy="135" rx="30" ry="34" fill="#ffee55"/>
-<ellipse cx="155" cy="135" rx="5" ry="30" fill="#000"/><ellipse cx="245" cy="135" rx="5" ry="30" fill="#000"/>
-<polygon points="188,168 212,168 200,182" fill="#e88a9a"/>
-<path d="M200 182 Q180 200 160 188 M200 182 Q220 200 240 188" fill="none" stroke="#3a1a05" stroke-width="4"/>
-<ellipse cx="200" cy="205" rx="26" ry="16" fill="#3a0008"/>
-<polygon points="180,196 188,196 184,210" fill="#fff"/><polygon points="212,196 220,196 216,210" fill="#fff"/>
-<g stroke="#fff" stroke-width="2.5"><path d="M110 175 L40 160 M110 185 L35 190 M110 195 L45 218 M290 175 L360 160 M290 185 L365 190 M290 195 L355 218"/></g>
-</svg>`;
+/* 彩蛋：貓 */
+const CUTE_IMG="cat.gif"; // 圖片路徑或網址
 let catT;
-const CUTE_IMG="cat.gif"; // ← 圖片路徑或網址
 function catScare(){
   const q=$("#cute");
+  q.className="";
   q.innerHTML=`<img src="${CUTE_IMG}" alt="">`;
   q.classList.add("on");
   sfx(880,1320,.25,"sine",.1);
   clearTimeout(catT);
-  catT=setTimeout(()=>{q.classList.remove("on");q.innerHTML="";catJump()},2000);
-}
-function catJump(){
-  const c=$("#cat");
-  c.innerHTML=CAT_IMG?`<img src="${CAT_IMG}" alt="">`:CAT_SVG;
-  c.classList.add("on");
-  sfx(900,2400,.5,"sawtooth",.5);sfx(80,30,.9,"square",.5);noise(.7,.6);
-  setTimeout(()=>sfx(1200,300,.4,"sawtooth",.4),150);
-  clearTimeout(catT);
   catT=setTimeout(()=>{
-    c.classList.remove("on");c.innerHTML="";
-    $("#out").textContent="……剛才，是什麼？";
-    setTimeout(()=>$("#out").textContent="你什麼都沒看見。",2200);
-  },1300);
+    q.classList.add("boom");
+    sfx(900,2400,.5,"sawtooth",.5);sfx(80,30,.9,"square",.5);noise(.7,.6);
+    setTimeout(()=>sfx(1200,300,.4,"sawtooth",.4),150);
+    catT=setTimeout(()=>{
+      q.className="";q.innerHTML="";
+      $("#out").textContent="……剛才，是什麼？";
+      setTimeout(()=>$("#out").textContent="你什麼都沒看見。",2200);
+    },1400);
+  },2000);
 }
-
 /* 打字機 */
 async function type(t){
   const o=$("#out");o.textContent="";
@@ -244,13 +229,13 @@ async function submit(){
     catScare();await sleep(4800);
     busy=false;sb.disabled=false;return;
   }
-  n++;addAltar(w);
+  const og=R(OR);n++;addAltar(og);
   $("#sigil").classList.add("hot");
   sfx(110,40,.8,"sawtooth",.3);noise(.4,.2);
   const fxs=[...FX].sort(()=>Math.random()-.5).slice(0,2+(Math.random()<.5?1:0));
   fxs.forEach((f,i)=>setTimeout(()=>f(w),i*500));
-  let r=R(RP)(w,n);
-  if(/死|殺|恨|消失/.test(w))r="這個願望，我們最喜歡。\n它已經開始了。";
+  let r=R(RP)(w,n,og);
+  if(/死|殺|恨|消失/.test(w))r=`這個願望，我們最喜歡。\n三天後，連同你的${og}一起收。`;
   if(/救命|help|救我/i.test(w))r="沒有人會來。\n這裡只有我們。";
   if(/666|魔|鬼/.test(w))r="你不必叫他的名字。\n他一直在看你。";
   speak(r);
