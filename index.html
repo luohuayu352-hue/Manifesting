@@ -73,6 +73,32 @@ button:disabled{opacity:.4;animation:none}
 50%{transform:scale(2.2) translate(12px,-12px) rotate(2deg)}
 75%{transform:scale(2.2) translate(-10px,-8px) rotate(-1deg)}
 100%{transform:scale(2.2) translate(0,0) rotate(0)}}
+.tos{font-size:.75rem;opacity:.6;letter-spacing:.1em;width:min(92vw,520px)}
+.tos a{color:#a0001a;text-decoration:underline dotted;cursor:pointer}
+.tos a:hover{color:#ff3050;animation:shk .1s infinite}
+#tos{position:fixed;inset:0;z-index:55;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.88)}
+#tos.on{display:flex}
+#tos.on .pw{animation:tin .5s steps(6)}
+@keyframes tin{0%{opacity:0;transform:scaleY(.02)}30%{opacity:1;transform:scale(1.25,.02)}60%{transform:scaleY(1.05)}100%{transform:none}}
+.pw{position:relative;width:min(92vw,560px)}
+.paper{max-height:84vh;overflow-y:auto;background:repeating-linear-gradient(0deg,rgba(255,0,30,.05) 0 1px,transparent 1px 3px),#0b0306;border:1px solid #b00014;box-shadow:0 0 40px #b00014,inset 0 0 50px rgba(120,0,16,.45);padding:46px 20px 24px;text-align:left;line-height:1.9;font-size:.95rem}
+.paper::-webkit-scrollbar{width:6px}.paper::-webkit-scrollbar-thumb{background:#7a0010}
+.paper h2{font-weight:400;letter-spacing:.2em;color:#ff5468;text-shadow:0 0 10px #b00014;font-size:1.1rem;margin-bottom:8px}
+.paper .pre{opacity:.75;margin-bottom:18px;font-size:.85rem}
+#tx{position:absolute;top:8px;right:8px;z-index:3;width:30px;height:30px;padding:0;letter-spacing:0;background:#6a0009;color:#fff;border:1px solid #f00;transition:transform .18s cubic-bezier(.3,1.6,.5,1)}
+#hint{position:absolute;top:12px;left:20px;z-index:2;font-size:.7rem;color:#ff2a40;opacity:.8;pointer-events:none}
+.r{margin:16px 0;padding-bottom:12px;border-bottom:1px dashed #3a0008;opacity:0;transform:translateX(-14px);filter:blur(5px)}
+.r.in{animation:rin .8s forwards}
+@keyframes rin{to{opacity:1;transform:none;filter:none}}
+.r b{color:#d0001c;font-weight:400;margin-right:2px}
+.r.strike span{text-decoration:line-through;text-decoration-color:#f00;text-decoration-thickness:2px;opacity:.45}
+.r em{display:block;font-style:normal;font-size:.75rem;color:#ff2a40;letter-spacing:.2em;opacity:0;transition:opacity .6s}
+.r em.on{opacity:.9}
+#tail{min-height:20px;margin-top:10px}
+.e1{color:#ff8c98;font-size:1.1rem}
+.e2{color:#c00018;word-break:break-all;line-height:1.4;font-size:.85rem;margin:8px 0}
+.e3{color:#f00;font-size:2rem;letter-spacing:.2em;text-shadow:0 0 18px #f00;animation:shk .06s infinite;margin:14px 0}
+#agree{display:none;margin:14px auto 0;padding:10px 26px}
 </style>
 </head>
 <body>
@@ -83,12 +109,22 @@ button:disabled{opacity:.4;animation:none}
   <h1 class="glitch" data-t="彼岸許願池">彼岸許願池</h1>
   <p class="sub" id="sub">凡有所求，必有所償</p>
   <div class="box"><input id="wish" maxlength="60" autocomplete="off" placeholder="寫下你的願望…"><button id="btn">獻 祭</button></div>
+  <p class="tos">提交即視為同意<a id="tosLink">《受膏者無償祈願暨第三日感恩回訪守則》</a></p>
   <div id="out"></div>
   <div class="cnt" id="cnt"></div>
   <div class="altar"><h3>獻祭器官</h3><ul id="altar"></ul></div>
 </div>
 <button id="snd">聲音：開</button>
 <div id="cute"></div>
+<div id="tos"><div class="pw">
+<button id="tx">✕</button><div id="hint"></div>
+<div class="paper" id="paper">
+<h2>受膏者無償祈願暨第三日感恩回訪守則</h2>
+<p class="pre">您可以隨時關閉這個視窗，右上角那個紅色的叉並不是貼圖。請以雙眼（若您目前仍保有兩顆的話）閱讀以下十條，請勿略過任何一個字。</p>
+<div id="rules"></div><div id="tail"></div>
+<button id="agree">我 同 意</button>
+</div></div></div>
+
 
 <script>
 
@@ -216,7 +252,80 @@ async function type(t){
     await sleep(160);o.textContent=t;
   }
 }
+/* 守則 */
+const NUM=["壹","貳","叁","肆","伍","陸","柒","捌","玖","拾"];
+const RL=[
+"填寫願望時，請使用直接的世俗名詞，切勿使用任何詩意的隱喻或修辭。",
+"本會在此嚴正聲明：恩典是絕對無償的。",
+"願望兌現後的第七十二個小時（我們通常稱之為「第三個日落後的感恩回訪」），本會將派遣兩名身穿深藍色防潑水圍裙的「執事」前往您填寫的地址，向您收取一點點純屬象徵性的「情緒利息」。",
+"當第三天夜晚門鈴響起時，請先透過門上的貓眼確認來者。",
+"承第四條，我們必須修正上一段的行政疏失：執事其實一直都是獨自一人作業的。",
+"在這等待回訪的七十二小時期間，請保持這個瀏覽器分頁處於開啟狀態，切勿關閉電腦或拔除網路線。",
+"如果您在第二天半夜聽見電腦主機發出焦臭味，且螢幕上的歌詞全部變成了「快逃快拔掉電源他在你床底下」，請立刻拿剪刀剪斷電源線與網路線，並把螢幕砸碎。",
+"為了體現本會的人道關懷，當執事在第三日進門並戴上乳膠手套時，我們強烈建議您提前吞服四到六顆強效止痛藥，並在嘴裡塞一塊乾毛巾。",
+"倘若您在七十二小時內反悔了，想要取消這筆祈願，程序其實非常簡便。",
+"當第三夜的回訪結束，執事提著保冷箱離開並替您帶上大門後，請獨自用漂白水將地板拖洗乾淨，然後去睡個好覺。"
+];
+const HT=["（它剛剛動了嗎？）","（是你的滑鼠有問題）","（好吧，這次真的可以了）"];
+let tosSeen=0,tosOn=0,dodged=0,ending=0,tosT,tosIO;
+const rEl=i=>document.querySelector(`.r[data-i="${i}"]`);
+function tag(i,t){const e=rEl(i).querySelector("em");e.textContent=t;e.classList.add("on");sfx(200,50,.3,"sawtooth",.08)}
 
+function openTos(){
+  if(tosOn)return;tosOn=1;dodged=0;ending=0;
+  $("#rules").innerHTML=RL.map((t,i)=>`<div class="r" data-i="${i}"><b>${NUM[i]}、</b><span>${t}</span><em></em></div>`).join("");
+  $("#tail").innerHTML="";$("#agree").style.display="none";
+  $("#hint").textContent="";$("#tx").style.transform="";
+  $("#paper").scrollTop=0;$("#tos").classList.add("on");
+  const bk=$(".black");bk.classList.add("on");setTimeout(()=>bk.classList.remove("on"),120);
+  sfx(60,30,.5,"square",.25);noise(.3,.2);
+  tosIO=new IntersectionObserver(es=>es.forEach(en=>{
+    if(!en.isIntersecting)return;const el=en.target;
+    if(el.id==="tail"){endTos();return}
+    if(el.classList.contains("in"))return;
+    el.classList.add("in");sfx(rnd(300,500),90,.12,"square",.05);
+    const i=+el.dataset.i;
+    if(i===1)setTimeout(()=>tag(1,"〔真的〕"),1500);
+    if(i===4)setTimeout(()=>{rEl(3).classList.add("strike");tag(3,"〔已修正〕");tag(4,"〔更正〕")},900);
+    if(i===6)setTimeout(()=>{rEl(5).classList.add("strike");tag(5,"〔遭竄改〕")},1000);
+    if(i===7)setTimeout(()=>tag(2,"〔與第捌條並無矛盾〕"),900);
+    if(i===8)setTimeout(()=>tag(8,"〔真的非常簡便〕"),1800);
+  }),{root:$("#paper"),threshold:.25});
+  document.querySelectorAll(".r,#tail").forEach(e=>tosIO.observe(e));
+  tosT=setInterval(()=>{
+    const seen=[...document.querySelectorAll(".r.in")];if(!seen.length)return;
+    const e=R(seen),sp=e.querySelector("span"),i=+e.dataset.i,o=sp.dataset.o||(sp.dataset.o=sp.textContent);
+    if(i===1&&Math.random()<.6){sp.textContent=o.replace("絕對無償","絕對有償");setTimeout(()=>sp.textContent=o,380);return}
+    if(i===8&&Math.random()<.6){sp.textContent=o.replace("非常簡便","不可能");setTimeout(()=>sp.textContent=o,380);return}
+    sp.textContent=Math.random()<.5?corrupt(o,.25):zalgo(o,2);
+    setTimeout(()=>sp.textContent=o,rnd(150,450));
+    if(Math.random()<.2){const b=e.querySelector("b"),ob=NUM[i]+"、";b.textContent=R(["零、","拾壹、","　、","？、"]);setTimeout(()=>b.textContent=ob,500)}
+    if(Math.random()<.15){const h=$("#paper h2"),oh="受膏者無償祈願暨第三日感恩回訪守則";h.textContent=corrupt(oh,.4);setTimeout(()=>h.textContent=oh,300)}
+    if(Math.random()<.3)eye(rnd(20,innerWidth-20),rnd(20,innerHeight-20),rnd(30,70),3000);
+  },1800);
+}
+function closeTos(){tosOn=0;$("#tos").classList.remove("on");clearInterval(tosT);if(tosIO)tosIO.disconnect()}
+
+async function endTos(){
+  if(ending)return;ending=1;const t=$("#tail"),p=$("#paper"),go=()=>{p.scrollTop=p.scrollHeight};
+  await sleep(600);if(!tosOn)return;
+  t.innerHTML='<p class="e1">……您違反了恩典</p>';go();sfx(90,30,.8,"sawtooth",.3);noise(.4,.3);
+  await sleep(1300);if(!tosOn)return;
+  const d=document.createElement("p");d.className="e2";t.appendChild(d);
+  for(let k=1;k<=8&&tosOn;k++){d.textContent="我們會一直"+"看著你".repeat(k*k);go();sfx(200+k*80,60,.15,"square",.06);await sleep(380)}
+  if(!tosOn)return;
+  FX[1]();FX[7]();sfx(40,20,1.2,"sawtooth",.35);
+  t.insertAdjacentHTML("beforeend",'<p class="e3">找到你了……</p>');
+  $("#agree").style.display="block";go();
+}
+
+const tx=$("#tx");
+function dodge(){dodged++;$("#hint").textContent=HT[dodged-1];
+  tx.style.transform=dodged>=3?"":`translate(${-rnd(60,300)}px,${rnd(50,260)}px)`;sfx(500,900,.1,"square",.08)}
+tx.addEventListener("pointerenter",e=>{if(e.pointerType==="mouse"&&dodged<3)dodge()});
+tx.onclick=()=>{if(dodged<3){dodge();return}closeTos()};
+$("#agree").onclick=()=>{closeTos();sfx(110,40,.8,"sawtooth",.3);type("簽署完成。\n你的名字，我們早就知道了。")};
+$("#tosLink").onclick=openTos;
 /* 提交願望 */
 const sb=$("#btn");
 async function submit(){
@@ -240,6 +349,7 @@ async function submit(){
   if(/666|魔|鬼/.test(w))r="你不必叫他的名字。\n他一直在看你。";
   speak(r);
   await type(r);
+    if(!tosSeen){tosSeen=1;setTimeout(openTos,1800)}
   if(Math.random()<.35)setTimeout(crash,800);
   setTimeout(()=>$("#sigil").classList.remove("hot"),1800);
   busy=false;sb.disabled=false;
